@@ -156,12 +156,12 @@ export default function StockDashboard() {
       <div className="bg-white rounded-[32px] border border-brand-border shadow-premium overflow-hidden">
         <div className="overflow-x-auto scrollbar-hide">
           <table className="w-full text-left border-collapse">
-            <thead>
+            <thead className="hidden lg:table-header-group">
               <tr className="bg-slate-50/50 border-b border-brand-border">
-                <th className="px-8 py-5 text-xs font-black text-brand-secondary uppercase tracking-widest sticky top-0 bg-slate-50/80 backdrop-blur-sm z-10 w-1/3">Product Details</th>
-                <th className="px-6 py-5 text-xs font-black text-brand-secondary uppercase tracking-widest sticky top-0 bg-slate-50/80 backdrop-blur-sm z-10">Company</th>
-                <th className="px-6 py-5 text-xs font-black text-brand-secondary uppercase tracking-widest sticky top-0 bg-slate-50/80 backdrop-blur-sm z-10">Unit Price</th>
-                <th className="px-6 py-5 text-xs font-black text-brand-secondary uppercase tracking-widest sticky top-0 bg-slate-50/80 backdrop-blur-sm z-10">Stock status</th>
+                <th className="px-8 py-5 text-xs font-black text-brand-secondary uppercase tracking-widest sticky top-0 bg-slate-50/80 backdrop-blur-sm z-10">Product Details</th>
+                <th className="px-6 py-5 text-xs font-black text-brand-secondary uppercase tracking-widest sticky top-0 bg-slate-50/80 backdrop-blur-sm z-10 text-center">Company</th>
+                <th className="px-6 py-5 text-xs font-black text-brand-secondary uppercase tracking-widest sticky top-0 bg-slate-50/80 backdrop-blur-sm z-10 text-center">Price</th>
+                <th className="px-6 py-5 text-xs font-black text-brand-secondary uppercase tracking-widest sticky top-0 bg-slate-50/80 backdrop-blur-sm z-10 text-center">Status</th>
                 <th className="px-8 py-5 text-xs font-black text-brand-secondary uppercase tracking-widest sticky top-0 bg-slate-50/80 backdrop-blur-sm z-10 text-right">Action</th>
               </tr>
             </thead>
@@ -191,24 +191,26 @@ export default function StockDashboard() {
                 stock.map((item, idx) => (
                   <tr 
                     key={item.id} 
-                    className={`group transition-colors border-b border-brand-border hover:bg-brand-bg/50 ${idx % 2 === 0 ? 'bg-white' : 'bg-slate-50/20'}`}
+                    className={`flex flex-col lg:table-row transition-colors border-b border-brand-border hover:bg-brand-bg/50 px-4 py-6 lg:px-0 lg:py-0 ${idx % 2 === 0 ? 'bg-white' : 'bg-slate-50/10'} relative group`}
                   >
-                    <td className="px-8 py-6">
+                    <td className="lg:px-8 lg:py-6 p-0 mb-4 lg:mb-0">
                       <div className="flex items-center space-x-4">
-                        <div className="bg-brand-bg w-12 h-12 rounded-2xl flex items-center justify-center text-sm font-bold text-brand-accent border border-brand-border group-hover:scale-110 transition-premium">
+                        <div className="bg-brand-bg w-10 h-10 lg:w-12 lg:h-12 rounded-2xl flex items-center justify-center text-sm font-bold text-brand-accent border border-brand-border group-hover:scale-110 transition-premium">
                           {item.product_name.charAt(0)}
                         </div>
                         <div>
-                          <p className="font-bold text-brand-primary text-base line-clamp-1">{item.product_name}</p>
+                          <p className="font-bold text-brand-primary text-base lg:text-lg line-clamp-1">{item.product_name}</p>
                           <p className="text-xs font-bold text-brand-secondary uppercase">{item.pack_size || 'Standard Pack'}</p>
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-6 text-sm font-semibold text-brand-secondary">
-                      {item.company || 'N/A'}
+                    <td className="lg:px-6 lg:py-6 lg:text-center text-left mb-2 lg:mb-0">
+                      <span className="lg:hidden text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">Company</span>
+                      <span className="text-sm font-bold text-brand-secondary">{item.company || 'N/A'}</span>
                     </td>
-                    <td className="px-6 py-6 font-black text-brand-primary">
-                      ₹{Number(item.price)?.toFixed(2) || '0.00'}
+                    <td className="lg:px-6 lg:py-6 lg:text-center text-left mb-4 lg:mb-0">
+                      <span className="lg:hidden text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">Price</span>
+                      <span className="font-black text-brand-primary text-lg lg:text-base">₹{Number(item.price)?.toFixed(2) || '0.00'}</span>
                     </td>
                     <td className="px-6 py-6">
                       <div className="flex flex-col">
