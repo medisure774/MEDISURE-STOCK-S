@@ -30,6 +30,11 @@ app.use((err, req, res, next) => {
     });
 });
 
-app.listen(PORT, () => {
-    console.log(`🚀 Medisure API running on http://localhost:${PORT}`);
-});
+// Export for Vercel
+module.exports = app;
+
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(PORT, () => {
+        console.log(`🚀 Medisure API running on http://localhost:${PORT}`);
+    });
+}
