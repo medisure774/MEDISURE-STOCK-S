@@ -17,9 +17,25 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/stock', require('./routes/stock'));
 app.use('/api/orders', require('./routes/orders'));
 
+// Root check
+app.get('/', (req, res) => {
+    res.json({ message: 'Medisure API is running. Use /api or /health for status.' });
+});
+
+app.get('/api', (req, res) => {
+    res.json({ 
+        message: 'Medisure API Root',
+        endpoints: ['/api/auth', '/api/stock', '/api/orders', '/health']
+    });
+});
+
 // Health check
 app.get('/health', (req, res) => {
-    res.json({ status: 'ok', time: new Date().toISOString() });
+    res.json({ 
+        status: 'ok', 
+        time: new Date().toISOString(),
+        env: process.env.NODE_ENV
+    });
 });
 
 // Error handling
