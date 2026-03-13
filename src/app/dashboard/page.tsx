@@ -212,7 +212,8 @@ export default function StockDashboard() {
                       <span className="lg:hidden text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">Price</span>
                       <span className="font-black text-brand-primary text-lg lg:text-base">₹{Number(item.price)?.toFixed(2) || '0.00'}</span>
                     </td>
-                    <td className="px-6 py-6">
+                    <td className="lg:px-6 lg:py-6 lg:text-center text-left mb-6 lg:mb-0">
+                      <span className="lg:hidden text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">Inventory status</span>
                       <div className="flex flex-col">
                         <span className={`px-3 py-1.5 rounded-xl text-[11px] font-black uppercase tracking-tighter w-fit flex items-center space-x-1.5 ${
                           Number(item.quantity) > 10 
@@ -226,19 +227,18 @@ export default function StockDashboard() {
                         </span>
                       </div>
                     </td>
-                    <td className="px-8 py-6 text-right">
+                    <td className="lg:px-8 lg:py-6 p-0 text-right lg:static mt-auto">
                       <button 
                         onClick={() => setIsOrdering(item)}
                         disabled={Number(item.quantity) <= 0}
-                        className={`inline-flex items-center space-x-2 px-6 py-3 rounded-2xl font-black text-sm transition-premium ${
+                        className={`w-full lg:w-auto inline-flex items-center justify-center space-x-2 px-6 py-4 lg:py-3 rounded-2xl font-black text-sm lg:text-xs transition-premium shadow-lg lg:shadow-md ${
                           Number(item.quantity) > 0 
-                            ? 'bg-brand-accent text-white hover:bg-blue-700 shadow-md hover:shadow-brand-accent/20' 
-                            : 'bg-brand-bg text-brand-secondary cursor-not-allowed border border-brand-border'
+                            ? 'bg-brand-accent text-white hover:bg-brand-accent/90 shadow-brand-accent/20' 
+                            : 'bg-brand-bg text-brand-secondary cursor-not-allowed border border-brand-border shadow-none'
                         }`}
                       >
-                        <ShoppingCart className="w-5 h-5 mr-1" />
-                        <span>Order</span>
-                        <ChevronRight className="w-4 h-4" />
+                        <ShoppingCart className="w-5 h-5 lg:w-4 lg:h-4 mr-1" />
+                        <span>Place Order</span>
                       </button>
                     </td>
                   </tr>
