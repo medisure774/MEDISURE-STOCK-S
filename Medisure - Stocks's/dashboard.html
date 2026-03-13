@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Medisure Plus — Employee Dashboard</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="icon" href="assets/logo.png" type="image/png" />
+</head>
+
+<body>
+
+    <div class="dash-layout">
+        <!-- HEADER -->
+        <header class="header">
+            <a class="header-logo" href="dashboard.html">
+                <img src="assets/logo.png" alt="Medisure Logo" />
+                <div class="header-logo-text">
+                    <strong>MEDISURE PLUS</strong>
+                    <span>Staff Portal</span>
+                </div>
+            </a>
+            <div class="header-actions">
+                <span class="header-badge" id="roleBadge"></span>
+                <span class="header-user" id="userDisplay"></span>
+                <button class="logout-btn" onclick="auth.logout()">Sign Out</button>
+            </div>
+        </header>
+
+        <!-- MAIN -->
+        <main class="main">
+
+            <!-- Tab Navigation -->
+            <div class="login-tabs" style="max-width: 400px; margin-bottom: 30px;">
+                <button class="login-tab active" id="tab-stock" onclick="switchView('stock')">📦 Medicines</button>
+                <button class="login-tab" id="tab-orders" onclick="switchView('orders')">📋 My Orders</button>
+            </div>
+
+            <!-- VIEW: Stock List -->
+            <div id="view-stock">
+                <!-- Stats Row -->
+                <div class="stats-bar">
+                    <div class="stat-card">
+                        <div class="stat-icon total">📦</div>
+                        <div class="stat-info">
+                            <div class="stat-val" id="statsTotal">0</div>
+                            <div class="stat-label">Products</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon in">🛒</div>
+                        <div class="stat-info">
+                            <div class="stat-val" id="cartCount">0</div>
+                            <div class="stat-label">In Cart</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Toolbar -->
+                <div class="toolbar">
+                    <div class="search-wrap">
+                        <span class="search-icon">🔍</span>
+                        <input class="search-input" type="search" id="stockSearch"
+                            placeholder="Search by name, company, or category..." />
+                    </div>
+                    <select class="filter-select" id="stockFilter">
+                        <option value="">All Status</option>
+                        <option value="In Stock">✅ In Stock</option>
+                        <option value="Low Stock">⚠️ Low Stock</option>
+                        <option value="Out of Stock">❌ Out of Stock</option>
+                    </select>
+                </div>
+
+                <!-- Stock Table -->
+                <div class="table-card">
+                    <div class="table-header">
+                        <div class="table-title">Live Stock Inventory</div>
+                        <button class="btn btn-primary btn-sm" onclick="showCart()">🛒 View Cart</button>
+                    </div>
+                    <div class="table-wrap">
+                        <table id="stockTable">
+                            <thead>
+                                <tr>
+                                    <th>Product Name</th>
+                                    <th>Company</th>
+                                    <th>Pack</th>
+                                    <th>Price</th>
+                                    <th>Qty</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="stockTbody">
+                                <tr>
+                                    <td colspan="7" style="text-align:center;padding:40px;">Loading stock data...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW: My Orders -->
+            <div id="view-orders" style="display:none;">
+                <div class="table-card">
+                    <div class="table-header">
+                        <div class="table-title">Order History</div>
+                        <div class="table-count" id="orderCount">0 orders</div>
+                    </div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Product</th>
+                                    <th>Qty</th>
+                                    <th>Status</th>
+                                    <th>Last Update</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ordersTbody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- CART MODAL -->
+    <div id="cartModal" class="login-page"
+        style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; z-index:1000; background:rgba(0,0,0,0.5);">
+        <div class="login-card" style="max-width:600px;">
+            <div class="table-header" style="background:transparent; border-bottom:1px solid #eee; margin-bottom:20px;">
+                <h3>Your Order Cart</h3>
+                <button class="btn btn-ghost" onclick="closeCart()">✕</button>
+            </div>
+
+            <div id="cartItems" style="max-height:300px; overflow-y:auto; margin-bottom:20px;">
+                <!-- Cart items list -->
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Order Notes (Optional)</label>
+                <textarea class="input" id="orderNotes" placeholder="Any specific instructions..."
+                    style="height:80px; padding:10px;"></textarea>
+            </div>
+
+            <div style="display:flex; gap:12px;">
+                <button class="btn btn-ghost" style="flex:1" onclick="closeCart()">Continue Shopping</button>
+                <button class="btn btn-primary" style="flex:1" id="placeOrderBtn" onclick="submitOrder()">Place
+                    Order</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-wrap" id="toastWrap"></div>
+
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/stock.js"></script>
+    <script src="js/orders.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const user = auth.requireAuth();
+            if (!user) return;
+
+            document.getElementById('userDisplay').textContent = user.name;
+            document.getElementById('roleBadge').textContent = user.role.toUpperCase();
+
+            // Load initial data
+            loadStock();
+            loadMyOrders();
+
+            // Search/Filter listeners
+            document.getElementById('stockSearch').addEventListener('input', applyFilters);
+            document.getElementById('stockFilter').addEventListener('change', applyFilters);
+        });
+
+        function switchView(view) {
+            document.getElementById('view-stock').style.display = view === 'stock' ? 'block' : 'none';
+            document.getElementById('view-orders').style.display = view === 'orders' ? 'block' : 'none';
+            document.getElementById('tab-stock').classList.toggle('active', view === 'stock');
+            document.getElementById('tab-orders').classList.toggle('active', view === 'orders');
+
+            if (view === 'orders') loadMyOrders();
+        }
+
+        function showCart() { document.getElementById('cartModal').style.display = 'flex'; renderCart(); }
+        function closeCart() { document.getElementById('cartModal').style.display = 'none'; }
+    </script>
+</body>
+
+</html>

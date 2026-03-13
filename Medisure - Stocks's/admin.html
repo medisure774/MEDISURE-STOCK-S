@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Medisure Plus — Admin Dashboard</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="icon" href="assets/logo.png" type="image/png" />
+    <style>
+        .view-section {
+            display: none;
+            width: 100%;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .view-section.active {
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="dash-layout">
+        <header class="header">
+            <a class="header-logo" href="admin.html">
+                <img src="assets/logo.png" alt="Medisure Logo" />
+                <div class="header-logo-text">
+                    <strong>MEDISURE PLUS</strong>
+                    <span style="color:#5eead4">Admin Dashboard</span>
+                </div>
+            </a>
+            <div class="header-actions">
+                <span class="header-badge admin">ADMINISTRATOR</span>
+                <span class="header-user" id="userDisplay">Admin</span>
+                <button class="logout-btn" onclick="auth.logout()">Sign Out</button>
+            </div>
+        </header>
+
+        <main class="main">
+
+            <!-- Sidebar/Tabs -->
+            <div class="login-tabs" style="margin-bottom: 30px;">
+                <button class="login-tab active" id="tab-orders" onclick="switchAdminView('orders')">📋 Manage
+                    Orders</button>
+                <button class="login-tab" id="tab-upload" onclick="switchAdminView('upload')">📤 Upload Stock</button>
+                <button class="login-tab" id="tab-employees" onclick="switchAdminView('employees')">👤
+                    Employees</button>
+            </div>
+
+            <!-- SECTION: ORDERS -->
+            <section id="view-orders" class="view-section active">
+                <div class="stats-bar">
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <div class="stat-val" id="countPending">0</div>
+                            <div class="stat-label">Pending Orders</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <div class="stat-val" id="countApproved">0</div>
+                            <div class="stat-label">Approved</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <div class="stat-val" id="countTotal">0</div>
+                            <div class="stat-label">Total History</div>
+                        </div>
+                    </div>
+                    <button class="btn btn-ghost" onclick="exportOrders()" title="Download CSV Report">📥 Export
+                        CSV</button>
+                </div>
+
+                <div class="table-card">
+                    <div class="table-header">
+                        <div class="table-title">Recent Employee Orders</div>
+                        <input type="search" class="search-input" id="orderSearch"
+                            placeholder="Filter by employee or product..."
+                            style="max-width:300px; padding:6px 12px 6px 36px;">
+                    </div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Employee</th>
+                                    <th>Product</th>
+                                    <th>Qty</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminOrdersTbody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION: UPLOAD -->
+            <section id="view-upload" class="view-section">
+                <div class="upload-area" id="dropZone" onclick="document.getElementById('fileInput').click()">
+                    <div style="font-size:3rem; margin-bottom:10px;">📄</div>
+                    <h3>Upload Daily Stock PDF</h3>
+                    <p>Drag and drop your stock sheet here, or click to browse</p>
+                    <div class="file-types"><span class="file-type-badge">PDF only</span></div>
+                    <input type="file" id="fileInput" accept=".pdf" style="display:none">
+                </div>
+
+                <div id="uploadProgress" style="display:none; text-align:center; padding:20px;">
+                    <progress id="pBar" value="0" max="100"
+                        style="width:100%; height:8px; border-radius:4px;"></progress>
+                    <p style="margin-top:10px;" id="pText">Parsing and uploading...</p>
+                </div>
+
+                <div class="table-card" id="previewCard" style="display:none;">
+                    <div class="table-header">
+                        <div class="table-title">Current Live Stock (Preview)</div>
+                        <button class="btn btn-ghost btn-sm" style="color:#991b1b" onclick="clearAllStock()">🗑 Clear
+                            All Stock</button>
+                    </div>
+                    <div class="table-wrap">
+                        <table id="stockTable">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Company</th>
+                                    <th>Pack</th>
+                                    <th>Price</th>
+                                    <th>Qty</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="stockTbody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION: EMPLOYEES -->
+            <section id="view-employees" class="view-section">
+                <div class="table-card" style="max-width:800px; margin:0 auto;">
+                    <div class="table-header">
+                        <h3>Employee Management</h3>
+                        <button class="btn btn-primary btn-sm" onclick="showAddEmployee()">＋ New Employee</button>
+                    </div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Role</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="employeeTbody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- MODAL: ADD EMPLOYEE -->
+    <div id="empModal" class="login-page"
+        style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; z-index:1000; background:rgba(0,0,0,0.5);">
+        <div class="login-card" style="max-width:400px;">
+            <h3>Register Employee</h3>
+            <p style="font-size:0.8rem; color:#64748b; margin-bottom:20px;">Create a new login credential.</p>
+            <form onsubmit="saveEmployee(event)">
+                <div class="form-group">
+                    <label class="form-label">Employee ID</label>
+                    <input type="text" class="input" id="newEmpId" placeholder="EMP00x" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" class="input" id="newEmpName" placeholder="John Doe" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="text" class="input" id="newEmpPass" placeholder="Temporary Pass" required>
+                </div>
+                <div style="display:flex; gap:10px; margin-top:20px;">
+                    <button type="button" class="btn btn-ghost" style="flex:1"
+                        onclick="document.getElementById('empModal').style.display='none'">Cancel</button>
+                    <button type="submit" class="btn btn-primary" style="flex:1">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-wrap" id="toastWrap"></div>
+
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/stock.js"></script>
+    <script src="js/admin.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const user = auth.requireAuth();
+            if (!user || user.role !== 'admin') {
+                window.location.href = 'index.html';
+                return;
+            }
+            document.getElementById('userDisplay').textContent = user.name;
+
+            // Init data
+            loadAllOrders();
+            loadStock();
+            loadEmployees();
+
+            // Drag & Drop
+            const dz = document.getElementById('dropZone');
+            dz.addEventListener('dragover', (e) => { e.preventDefault(); dz.classList.add('dragover'); });
+            dz.addEventListener('dragleave', () => dz.classList.remove('dragover'));
+            dz.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dz.classList.remove('dragover');
+                if (e.dataTransfer.files[0]) handleUpload(e.dataTransfer.files[0]);
+            });
+            document.getElementById('fileInput').addEventListener('change', (e) => {
+                if (e.target.files[0]) handleUpload(e.target.files[0]);
+            });
+
+            // Search Filter
+            document.getElementById('orderSearch').addEventListener('input', filterAdminOrders);
+        });
+
+        function switchAdminView(view) {
+            document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.login-tab').forEach(t => t.classList.remove('active'));
+            document.getElementById(`view-${view}`).classList.add('active');
+            document.getElementById(`tab-${view}`).classList.add('active');
+
+            if (view === 'upload') document.getElementById('previewCard').style.display = 'block';
+            else document.getElementById('previewCard').style.display = 'none';
+        }
+
+        function showAddEmployee() { document.getElementById('empModal').style.display = 'flex'; }
+    </script>
+</body>
+
+</html>

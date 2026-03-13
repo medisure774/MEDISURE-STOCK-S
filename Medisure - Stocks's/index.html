@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Medisure Plus — Secure Login</title>
+  <meta name="description" content="Secure login portal for Medisure stock management system." />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="icon" href="assets/logo.png" type="image/png" />
+</head>
+
+<body>
+
+  <div class="login-page">
+    <div class="login-card">
+
+      <div class="login-logo">
+        <img src="assets/logo.png" alt="Medisure Logo" />
+        <h1>MEDISURE PLUS</h1>
+        <p>Advanced Stock Management</p>
+      </div>
+
+      <!-- Role Tabs -->
+      <div class="login-tabs" role="tablist">
+        <button class="login-tab active" id="tab-employee" onclick="setTab('employee')" role="tab"
+          aria-selected="true">👤 Employee</button>
+        <button class="login-tab" id="tab-admin" onclick="setTab('admin')" role="tab" aria-selected="false">⚙
+          Admin</button>
+      </div>
+
+      <!-- Error Box -->
+      <div class="login-error" id="loginError" role="alert"></div>
+
+      <!-- Login Form -->
+      <form id="loginForm" onsubmit="handleLogin(event)" autocomplete="on" novalidate>
+
+        <div class="form-group">
+          <label class="form-label" for="employee_id">Employee ID</label>
+          <div class="input-wrap">
+            <span class="input-icon">👤</span>
+            <input class="input" type="text" id="employee_id" name="employee_id"
+              placeholder="Enter your ID (e.g. EMP001)" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="password">Password</label>
+          <div class="input-wrap">
+            <span class="input-icon">🔒</span>
+            <input class="input" type="password" id="password" name="password" placeholder="Enter your password"
+              autocomplete="current-password" required />
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary login-btn" id="loginBtn">
+          Sign In &rarr;
+        </button>
+
+        <div class="login-footer">
+          <p>If you don't have access, please contact your administrator.</p>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- Medisure JS Modules -->
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+
+  <script>
+    // Redirect if already logged in
+    if (auth.getUser()) {
+      window.location.href = auth.isAdmin() ? 'admin.html' : 'dashboard.html';
+    }
+
+    let selectedRole = 'employee';
+
+    function setTab(role) {
+      selectedRole = role;
+      document.getElementById('tab-employee').classList.toggle('active', role === 'employee');
+      document.getElementById('tab-admin').classList.toggle('active', role === 'admin');
+      document.getElementById('loginError').classList.remove('show');
+
+      // Reset/Clear inputs
+      document.getElementById('employee_id').value = '';
+      document.getElementById('password').value = '';
+    }
+
+    async function handleLogin(e) {
+      e.preventDefault();
+      const id = document.getElementById('employee_id').value;
+      const pw = document.getElementById('password').value;
+      const err = document.getElementById('loginError');
+      const btn = document.getElementById('loginBtn');
+
+      if (!id || !pw) {
+        err.textContent = 'Please enter both ID and password.';
+        err.classList.add('show');
+        return;
+      }
+
+      btn.textContent = 'Signing in…';
+      btn.disabled = true;
+
+      try {
+        const result = await auth.login(id, pw);
+        if (result.success) {
+          // Optional role check on client for better UX
+          if (result.user.role !== selectedRole) {
+            // We allow it, but maybe just redirect to the correct place
+          }
+          btn.textContent = '✓ Redirecting…';
+          window.location.href = result.user.role === 'admin' ? 'admin.html' : 'dashboard.html';
+        } else {
+          err.textContent = result.message;
+          err.classList.add('show');
+          btn.textContent = 'Sign In →';
+          btn.disabled = false;
+        }
+      } catch (e) {
+        err.textContent = 'Connection error. Please try again.';
+        err.classList.add('show');
+        btn.textContent = 'Sign In →';
+        btn.disabled = false;
+      }
+    }
+  </script>
+
+</body>
+
+</html>
