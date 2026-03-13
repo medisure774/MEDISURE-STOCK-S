@@ -21,15 +21,15 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <AuthProvider>
-          <div className="flex min-h-screen bg-brand-bg">
+          <div className="flex min-h-screen bg-brand-bg relative overflow-x-hidden">
             <Sidebar />
             <div className="flex-1 flex flex-col min-w-0">
               <Header />
-              <main className="flex-1 p-8 overflow-y-auto">
+              <main className="flex-1 p-4 md:p-8">
                 {children}
               </main>
-              <footer className="py-8 px-10 border-t border-brand-border text-sm text-brand-secondary bg-white">
-                <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+              <footer className="py-6 md:py-8 px-6 md:px-10 border-t border-brand-border text-sm text-brand-secondary bg-white">
+                <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
                   <p>&copy; {new Date().getFullYear()} Medisure Plus. All rights reserved.</p>
                   <p className="font-bold text-brand-accent italic">Reliable Healthcare Distribution</p>
                 </div>

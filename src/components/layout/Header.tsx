@@ -5,17 +5,27 @@ import {
   LogOut, 
   User as UserIcon,
   Bell,
-  Search
+  Search,
+  Menu
 } from 'lucide-react';
 
 export default function Header() {
-  const { user, logout } = useAuth();
+  const { user, logout, setMobileMenuOpen } = useAuth();
 
   if (!user) return null;
 
   return (
-    <header className="h-20 bg-white/80 backdrop-blur-md border-b border-brand-border px-8 flex items-center justify-between sticky top-0 z-30">
-      <div className="relative w-96 hidden md:block">
+    <header className="h-20 bg-white/80 backdrop-blur-md border-b border-brand-border px-4 md:px-8 flex items-center justify-between sticky top-0 z-30">
+      <div className="flex items-center lg:hidden">
+        <button 
+          onClick={() => setMobileMenuOpen(true)}
+          className="p-2 -ml-2 text-brand-secondary hover:bg-brand-bg rounded-xl transition-premium"
+        >
+          <Menu className="w-6 h-6" />
+        </button>
+      </div>
+
+      <div className="relative w-96 hidden lg:block">
         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
           <Search className="h-4 w-4 text-brand-secondary" />
         </div>

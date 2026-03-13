@@ -54,50 +54,50 @@ export default function LoginPage() {
       <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-brand-accent/20 rounded-full blur-[120px] animate-pulse"></div>
       <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-emerald-500/10 rounded-full blur-[120px] animate-pulse delay-700"></div>
       
-      <div className="w-full max-w-6xl flex flex-col lg:flex-row items-center gap-12 lg:gap-24 relative z-10">
+      <div className="w-full max-w-6xl flex flex-col lg:flex-row items-center gap-12 lg:gap-24 relative z-10 py-10">
         
         {/* Left: Branding & Value Prop */}
-        <div className="flex-1 space-y-12 text-center lg:text-left">
+        <div className="flex-1 space-y-8 lg:space-y-12 text-center lg:text-left">
            <div className="flex items-center justify-center lg:justify-start space-x-4 mb-2">
-              <div className="bg-brand-accent p-3 rounded-2xl shadow-xl shadow-brand-accent/40 animate-bounce">
-                <Activity className="w-10 h-10 text-white" />
+              <div className="bg-brand-accent p-2.5 lg:p-3 rounded-2xl shadow-xl shadow-brand-accent/40 animate-bounce">
+                <Activity className="w-8 h-8 lg:w-10 lg:h-10 text-white" />
               </div>
-              <h1 className="text-4xl font-black text-white tracking-tight">Medisure <span className="text-brand-accent italic">Plus</span></h1>
+              <h1 className="text-3xl lg:text-4xl font-black text-white tracking-tight">Medisure <span className="text-brand-accent italic">Plus</span></h1>
            </div>
-
-           <div className="space-y-6">
-              <h2 className="text-5xl lg:text-7xl font-black text-white leading-[1.1] tracking-tighter">
+ 
+           <div className="space-y-4 lg:space-y-6">
+              <h2 className="text-4xl lg:text-7xl font-black text-white leading-[1.1] tracking-tighter">
                 Precision <br />
-                <span className="bg-clip-text text-transparent bg-gradient-to-r from-brand-accent to-emerald-400">
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-brand-accent to-blue-400">
                   Inventory
-                </span> <br />
+                </span> <br className="hidden lg:block" />
                 Solutions.
               </h2>
-              <p className="text-slate-400 text-xl font-medium max-w-lg mx-auto lg:mx-0">
+              <p className="text-slate-400 text-lg lg:text-xl font-medium max-w-lg mx-auto lg:mx-0 px-4 lg:px-0">
                 The leading edge in pharmaceutical distribution management. Fast, reliable, and secure.
               </p>
            </div>
-
-           <div className="grid grid-cols-2 gap-6 max-w-sm mx-auto lg:mx-0">
-              <div className="bg-white/5 backdrop-blur-sm border border-white/10 p-5 rounded-2xl text-center">
-                 <p className="text-brand-accent text-2xl font-black">10K+</p>
-                 <p className="text-slate-500 text-xs font-bold uppercase tracking-widest mt-1">Daily SKU's</p>
+ 
+           <div className="grid grid-cols-2 gap-4 lg:gap-6 max-w-sm mx-auto lg:mx-0 px-4 lg:px-0">
+              <div className="bg-white/5 backdrop-blur-sm border border-white/10 p-4 lg:p-5 rounded-2xl text-center">
+                 <p className="text-brand-accent text-xl lg:text-2xl font-black">10K+</p>
+                 <p className="text-slate-500 text-[10px] lg:text-xs font-bold uppercase tracking-widest mt-1">Daily SKU's</p>
               </div>
-              <div className="bg-white/5 backdrop-blur-sm border border-white/10 p-5 rounded-2xl text-center">
-                 <p className="text-emerald-400 text-2xl font-black">99.9%</p>
-                 <p className="text-slate-500 text-xs font-bold uppercase tracking-widest mt-1">Accuracy</p>
+              <div className="bg-white/5 backdrop-blur-sm border border-white/10 p-4 lg:p-5 rounded-2xl text-center">
+                 <p className="text-blue-400 text-xl lg:text-2xl font-black">99.9%</p>
+                 <p className="text-slate-500 text-[10px] lg:text-xs font-bold uppercase tracking-widest mt-1">Accuracy</p>
               </div>
            </div>
         </div>
-
+ 
         {/* Right: Login Card */}
-        <div className="w-full lg:w-[480px]">
-          <div className="glass rounded-[48px] p-12 shadow-2xl border border-white/10 relative overflow-hidden group animate-in slide-in-from-right-12 duration-700">
+        <div className="w-full lg:w-[480px] px-4 lg:px-0">
+          <div className="glass rounded-[32px] lg:rounded-[48px] p-8 lg:p-12 shadow-2xl border border-white/10 relative overflow-hidden group animate-in slide-in-from-bottom-12 lg:slide-in-from-right-12 duration-700">
             <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-brand-accent via-blue-400 to-emerald-500"></div>
             
-            <div className="mb-12">
-              <h3 className="text-3xl font-black text-brand-primary dark:text-white mb-2 tracking-tight">Access Terminal</h3>
-              <p className="text-brand-secondary font-medium">Verify credentials to synchronize data.</p>
+            <div className="mb-8 lg:mb-12 text-center lg:text-left">
+              <h3 className="text-2xl lg:text-3xl font-black text-brand-primary dark:text-white mb-2 tracking-tight">Access Terminal</h3>
+              <p className="text-brand-secondary font-medium text-sm lg:text-base">Verify credentials to synchronize data.</p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-8">

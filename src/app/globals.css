@@ -1,29 +1,30 @@
 @import "tailwindcss";
 
 @theme {
-  --color-brand-primary: #0f172a;
-  --color-brand-secondary: #475569;
-  --color-brand-accent: #2563eb;
+  --color-brand-primary: #1e293b;
+  --color-brand-secondary: #64748b;
+  --color-brand-accent: #059669; /* Health Green */
+  --color-brand-info: #2563eb;   /* Professional Blue */
   --color-brand-success: #10b981;
   --color-brand-warning: #f59e0b;
   --color-brand-danger: #ef4444;
-  --color-brand-bg: #f8fafc;
+  --color-brand-bg: #ffffff;    /* Pure White Background */
   --color-brand-card: #ffffff;
-  --color-brand-border: #e2e8f0;
+  --color-brand-border: #f1f5f9;
   
-  --shadow-premium: 0 10px 15px -3px rgb(0 0 0 / 0.04), 0 4px 6px -4px rgb(0 0 0 / 0.04);
-  --shadow-premium-hover: 0 20px 25px -5px rgb(0 0 0 / 0.08), 0 8px 10px -6px rgb(0 0 0 / 0.08);
-  --shadow-inner-soft: inset 0 2px 4px 0 rgb(0 0 0 / 0.05);
+  --shadow-premium: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+  --shadow-premium-hover: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  --shadow-inner-soft: inset 0 2px 4px 0 rgb(0 0 0 / 0.02);
 }
 
 :root {
-  --background: #f8fafc;
-  --foreground: #0f172a;
+  --background: #ffffff;
+  --foreground: #1e293b;
   --card: #ffffff;
-  --border: #e2e8f0;
-  --ring: #2563eb;
-  --radius-xl: 1.5rem;
-  --radius-2xl: 2rem;
+  --border: #f1f5f9;
+  --ring: #059669;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
 }
 
 @media (prefers-color-scheme: dark) {
