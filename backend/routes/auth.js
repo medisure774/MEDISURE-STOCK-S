@@ -32,14 +32,14 @@ router.post('/login', async (req, res) => {
         }
 
         if (!user) {
-            console.warn(`[AUTH] User not found: ${employee_id}`);
-            return res.status(401).json({ error: 'Invalid Employee ID or password' });
+            console.warn(`[AUTH] User not found: "${employee_id.trim()}"`);
+            return res.status(401).json({ error: 'Invalid Employee ID (User Not Found)' });
         }
 
         const valid = bcrypt.compareSync(password, user.password);
         if (!valid) {
-            console.warn(`[AUTH] Password mismatch for: ${employee_id}`);
-            return res.status(401).json({ error: 'Invalid Employee ID or password' });
+            console.warn(`[AUTH] Password mismatch for: "${employee_id.trim()}"`);
+            return res.status(401).json({ error: 'Invalid Password' });
         }
 
         console.log(`[AUTH] Login successful: ${user.name} (${user.role})`);
