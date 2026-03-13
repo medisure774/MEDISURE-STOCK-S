@@ -3,15 +3,22 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
-const AuthContext = createContext({
+interface AuthContextType {
+  user: any;
+  login: (userData: any, token: string) => void;
+  logout: () => void;
+  isLoading: boolean;
+}
+
+const AuthContext = createContext<AuthContextType>({
   user: null,
   login: () => {},
   logout: () => {},
   isLoading: true
 });
 
-export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+  const [user, setUser] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
@@ -25,7 +32,7 @@ export const AuthProvider = ({ children }) => {
     setIsLoading(false);
   }, []);
 
-  const login = (userData, token) => {
+  const login = (userData: any, token: string) => {
     localStorage.setItem('medisure_user', JSON.stringify(userData));
     localStorage.setItem('medisure_token', token);
     setUser(userData);
