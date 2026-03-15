@@ -35,6 +35,24 @@ router.post('/', verifyToken, async (req, res) => {
     }
 
     try {
+        // 1. Validate Stock Availability for ALL items first
+        for (const item of items) {
+            const { data: stockItem, error: fetchError } = await supabase
+                .from('stock')
+                .select('product_name, quantity')
+                .eq('product_name', item.product_name)
+                .single();
+
+            if (fetchError || !stockItem) {
+                return res.status(404).json({ error: `Product "${item.product_name}" not found in stock.` });
+            }
+
+            if (stockItem.quantity < item.qty_requested) {
+                return res.status(400).json({ error: 'Insufficient stock available.' });
+            }
+        }
+
+        // 2. Prepare order data
         const orderItems = items.map(item => ({
             employee_id: req.user.employee_id,
             employee_name: req.user.name,
@@ -47,12 +65,41 @@ router.post('/', verifyToken, async (req, res) => {
             status: 'pending'
         }));
 
-        const { data, error } = await supabase.from('orders').insert(orderItems);
-        if (error) throw error;
+        // 3. Insert into orders table
+        const { error: insertError } = await supabase.from('orders').insert(orderItems);
+        if (insertError) throw insertError;
 
-        res.status(201).json({ success: true, message: 'Order placed successfully' });
+        // 4. Deduct quantity from stock table
+        // We do this after successful order insertion
+        for (const item of items) {
+            const { error: updateError } = await supabase.rpc('decrement_stock', {
+                p_name: item.product_name,
+                p_amount: item.qty_requested
+            });
+
+            // If RPC is not available, we use a standard update
+            if (updateError) {
+                console.warn('[ORDERS] RPC decrement failed, falling back to standard update:', updateError.message);
+                
+                // Fallback: Fetch latest again to be safe and update
+                const { data: current } = await supabase
+                    .from('stock')
+                    .select('quantity')
+                    .eq('product_name', item.product_name)
+                    .single();
+                
+                const newQty = Math.max(0, (current?.quantity || 0) - item.qty_requested);
+                
+                await supabase
+                    .from('stock')
+                    .update({ quantity: newQty })
+                    .eq('product_name', item.product_name);
+            }
+        }
+
+        res.status(201).json({ success: true, message: 'Order placed successfully and stock updated.' });
     } catch (err) {
-        console.error('Error placing order:', err);
+        console.error('Error processing order:', err);
         res.status(500).json({ error: 'Failed to place order: ' + err.message });
     }
 });

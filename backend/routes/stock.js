@@ -155,47 +155,50 @@ function parsePdfText(text, fileName) {
         const cells = splitLine(line);
         if (cells.length < 2) continue;
 
-        const get = (key) => {
-            const idx = colMap[key];
-            if (idx === undefined || idx >= cells.length) return '';
-            return (cells[idx] || '').trim();
-        };
+        // Implement "Final numeric value as quantity" rule
+        // Paracetamol 500 10's Tab 120 -> name: "Paracetamol 500 10's Tab", qty: 120
+        const rowText = line.trim();
+        const parts = rowText.split(/\s+/);
+        
+        let qty = 0;
+        let name = '';
+        let price = null;
+        let company = '';
 
-        let name = get('name');
-        if (!name || /^\d+$/.test(name) || /s\.?no\.?/i.test(name)) {
-            for (let c = 0; c < Math.min(cells.length, 3); c++) {
-                if (!/^\d+$/.test(cells[c]) && cells[c].length > 2 && !/s\.?no\.?/i.test(cells[c])) {
-                    name = cells[c];
-                    break;
-                }
-            }
+        // Check if the last part is a number
+        const lastPart = parts[parts.length - 1];
+        if (!isNaN(lastPart) && lastPart.length > 0) {
+            qty = parseFloat(lastPart);
+            // Everything else is name (unless we have structured columns)
+            // But requirement 3 says: final numeric value as quantity
+            name = parts.slice(0, parts.length - 1).join(' ');
+        } else {
+            // Fallback to colMap if simple split fails
+            const get = (key) => {
+                const idx = colMap[key];
+                if (idx === undefined || idx >= cells.length) return '';
+                return (cells[idx] || '').trim();
+            };
+            name = get('name');
+            qty = parseFloat(get('qty').replace(/[^\d.]/g, '')) || 0;
         }
+
+        // Refine name/company if colMap is available and useful
+        if (colMap.company !== undefined) company = cells[colMap.company] || '';
+        if (colMap.price !== undefined) price = parseFloat(cells[colMap.price]?.replace(/[^\d.]/g, '')) || null;
 
         if (!name || name.length < 2) continue;
-        if (/s\.?no\.?|particulars|description/i.test(name)) continue;
-
-        let rawQty = get('qty').replace(/[^\d.]/g, '');
-        if (!rawQty) {
-            for (let c = cells.length - 1; c >= 0; c--) {
-                const val = (cells[c] || '').replace(/[^\d.]/g, '');
-                if (val && !isNaN(val)) { rawQty = val; break; }
-            }
-        }
-        const qty = parseFloat(rawQty) || 0;
-
-        const rawPrice = get('price').replace(/[^\d.]/g, '');
-        const price = parseFloat(rawPrice) || null;
 
         rows.push({
             name,
-            company: get('company'),
-            pack_size: get('pack'),
+            company,
+            pack_size: '', // Pack size often included in name as per req
             price,
-            sku: get('sku'),
-            category: get('cat'),
+            sku: '',
+            category: '',
             qty,
-            unit: get('unit'),
-            status: get('status') || autoStatus(qty),
+            unit: '',
+            status: autoStatus(qty),
         });
     }
 
